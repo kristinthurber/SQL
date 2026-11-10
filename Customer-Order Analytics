@@ -43,3 +43,41 @@ LEFT JOIN FebSales
 ON FebSales.orderID = customers.order_id
 WHERE length(FebSales.orderID) = 6
 AND FebSales.Quantity >2;
+
+--How many of each type of headphone were sold in February?
+SELECT Product, SUM(Quantity)
+FROM FebSales
+WHERE Product LIKE "%headphones%"
+AND length(orderID) = 6
+GROUP BY Product;
+
+--What was the average amount spent per account in February?
+SELECT SUM(Quantity * price) / COUNT(acctnum)
+FROM FebSales
+LEFT JOIN customers
+ON FebSales.orderID = customers.order_id
+WHERE length(orderID) = 6;
+
+--Find order ids from Georgia (GA) where the order has an average price greater than $1,000. Only find orders from dates beginning with ‘04/1’.
+SELECT orderID
+FROM AprSales
+WHERE length(orderID) = 6
+AND orderdate LIKE "04/1%"
+AND location LIKE "%GA%"
+GROUP BY orderID
+HAVING AVG(price) > 1000;
+
+--Show location and orderID for May orders with order ID starting with 1943 and ending in 5
+SELECT DISTINCT location, orderID
+FROM MaySales
+WHERE length(orderID) = 6
+AND orderID LIKE "1943_5"
+ORDER BY orderID;
+
+--Which product brought in the most revenue in January and how much revenue did it bring in total?
+SELECT Product, SUM(Quantity * price) AS revenue
+FROM JanSales
+WHERE length(orderID) = 6
+GROUP BY Product
+ORDER BY revenue desc
+LIMIT 1;
